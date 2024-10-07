@@ -1,17 +1,11 @@
-# Project Name
+# Famedly rust utils
 
 [![rust workflow status][badge-rust-workflow-img]][badge-rust-workflow-url]
-[![docker workflow status][badge-docker-workflow-img]][badge-docker-workflow-url]
-[![docs main][badge-docs-main-img]][badge-docs-main-url]
 
-[badge-rust-workflow-img]: https://github.com/famedly/rust-library-template/actions/workflows/rust.yml/badge.svg
-[badge-rust-workflow-url]: https://github.com/famedly/rust-library-template/commits/main
-[badge-docker-workflow-img]: https://github.com/famedly/rust-library-template/actions/workflows/docker.yml/badge.svg
-[badge-docker-workflow-url]: https://github.com/famedly/rust-library-template/commits/main
-[badge-docs-main-img]: https://img.shields.io/badge/docs-main-blue
-[badge-docs-main-url]: https://famedly.github.io/rust-library-template/project_name/index.html
+[badge-rust-workflow-img]: https://github.com/famedly/famedly-rust-utils/actions/workflows/rust.yml/badge.svg
+[badge-rust-workflow-url]: https://github.com/famedly/famedly-rust-utils/commits/main
 
-Short description of the project.
+Random rust utility functions and types
 
 ## Lints
 
