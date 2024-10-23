@@ -2,6 +2,7 @@
 
 /// Workaround on [`url::Url::join` behavior](https://github.com/servo/rust-url/issues/333)
 mod base_url;
+pub mod duration;
 /// [serde::Deserialize] impl for [tracing::level_filters::LevelFilter]
 mod level_filter;
 
@@ -204,3 +205,53 @@ fn test_chain_opt() {
 fn test_generic_collect() {
 	assert_eq!((1..=3).generic_collect(Vec::new(), Vec::push), vec![1, 2, 3]);
 }
+
+#[doc(hidden)]
+macro_rules! define_generic_wrapper {
+	($doc:expr, $name:ident: $( $(feature $feat:expr; )? { $t:ty, $deser:expr, $($ser:expr)? }),*) => {
+		#[doc = $doc]
+		#[derive(Debug, PartialEq, Eq, Clone, Default)]
+		#[repr(transparent)]
+		pub struct $name<D>(D);
+
+		impl<D> $name<D> {
+			#[allow(missing_docs)]
+			pub fn into_inner(self) -> D {
+				self.0
+			}
+		}
+
+		impl<D> From<D> for $name<D> {
+			fn from(duration: D) -> Self {
+				$name(duration)
+			}
+		}
+
+		impl<D> std::ops::Deref for $name<D> {
+			type Target = D;
+			fn deref(&self) -> &Self::Target {
+				&self.0
+			}
+		}
+
+		impl<D> AsRef<D> for $name<D> {
+			fn as_ref(&self) -> &D {
+				&self.0
+			}
+		}
+
+		$(
+			$( #[cfg(feature = $feat)] )?
+			impl<'de> serde::Deserialize<'de> for $name<$t> {
+				fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+				where
+					D: serde::Deserializer<'de>,
+				{
+					Ok($name($deser(deserializer)?))
+				}
+			}
+		)*
+	};
+}
+
+pub(crate) use define_generic_wrapper;

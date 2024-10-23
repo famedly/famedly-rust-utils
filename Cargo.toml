@@ -9,8 +9,15 @@ publish = ["famedly"]
 [dependencies]
 serde = { version = "1.0.210", features = ["derive"] }
 thiserror = "1.0.64"
+time = { version = "0.3.36", optional = true }
 tracing = "0.1.40"
 url = { version = "2.5.2", features = ["serde"] }
+
+[dev-dependencies]
+serde_json = "1.0.128"
+
+[features]
+time = ["dep:time"]
 
 [lints.rust]
 dead_code = "warn"
@@ -102,6 +109,3 @@ used_underscore_binding = "warn"
 useless_let_if_seq = "warn"
 verbose_file_reads = "warn"
 unit_arg = "allow"
-
-[dev-dependencies]
-serde_json = "1.0.128"
