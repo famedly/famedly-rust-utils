@@ -212,7 +212,7 @@ macro_rules! define_generic_wrapper {
 		#[doc = $doc]
 		#[derive(Debug, PartialEq, Eq, Clone, Default)]
 		#[repr(transparent)]
-		pub struct $name<D>(D);
+		pub struct $name<D>(pub D);
 
 		impl<D> $name<D> {
 			#[allow(missing_docs)]
@@ -237,6 +237,12 @@ macro_rules! define_generic_wrapper {
 		impl<D> AsRef<D> for $name<D> {
 			fn as_ref(&self) -> &D {
 				&self.0
+			}
+		}
+
+		impl<D: std::fmt::Display> std::fmt::Display for $name<D> {
+			fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+				self.0.fmt(f)
 			}
 		}
 

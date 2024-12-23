@@ -19,7 +19,13 @@ use serde::{de, Deserialize};
 /// ```
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(transparent)]
-pub struct LevelFilter(tracing::level_filters::LevelFilter);
+pub struct LevelFilter(pub tracing::level_filters::LevelFilter);
+
+impl std::fmt::Display for LevelFilter {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+		self.0.fmt(f)
+	}
+}
 
 impl<'de> Deserialize<'de> for LevelFilter {
 	fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>

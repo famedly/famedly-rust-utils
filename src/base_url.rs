@@ -58,6 +58,12 @@ impl BaseUrl {
 	}
 }
 
+impl std::fmt::Display for BaseUrl {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+		self.url.fmt(f)
+	}
+}
+
 impl TryFrom<Url> for BaseUrl {
 	type Error = ();
 	fn try_from(url: Url) -> Result<Self, Self::Error> {
