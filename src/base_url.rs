@@ -100,6 +100,18 @@ impl From<BaseUrl> for Url {
 	}
 }
 
+impl AsRef<Url> for BaseUrl {
+	fn as_ref(&self) -> &Url {
+		&self.url
+	}
+}
+
+impl AsRef<str> for BaseUrl {
+	fn as_ref(&self) -> &str {
+		self.url.as_ref()
+	}
+}
+
 impl Deref for BaseUrl {
 	type Target = Url;
 	fn deref(&self) -> &Self::Target {

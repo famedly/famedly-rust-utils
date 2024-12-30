@@ -56,6 +56,12 @@ impl From<tracing::level_filters::LevelFilter> for LevelFilter {
 	}
 }
 
+impl AsRef<tracing::level_filters::LevelFilter> for LevelFilter {
+	fn as_ref(&self) -> &tracing::level_filters::LevelFilter {
+		&self.0
+	}
+}
+
 impl std::ops::Deref for LevelFilter {
 	type Target = tracing::level_filters::LevelFilter;
 	fn deref(&self) -> &Self::Target {
