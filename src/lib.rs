@@ -8,6 +8,9 @@ mod level_filter;
 #[cfg(feature = "reqwest")]
 /// Helpers for [reqwest]
 pub mod reqwest;
+#[cfg(feature = "telemetry")]
+/// Function to setup the telemetry tools
+pub mod telemetry;
 
 pub use base_url::{BaseUrl, BaseUrlParseError};
 pub use level_filter::LevelFilter;
