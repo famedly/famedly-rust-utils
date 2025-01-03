@@ -5,6 +5,9 @@ mod base_url;
 pub mod duration;
 /// [serde::Deserialize] impl for [tracing::level_filters::LevelFilter]
 mod level_filter;
+#[cfg(feature = "telemetry")]
+/// Function to setup the telemetry tools
+pub mod telemetry;
 
 pub use base_url::{BaseUrl, BaseUrlParseError};
 pub use level_filter::LevelFilter;

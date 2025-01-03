@@ -13,11 +13,46 @@ time = { version = "0.3.36", optional = true }
 tracing = "0.1.40"
 url = { version = "2.5.2", features = ["serde"] }
 
+# telemetry deps
+async-trait = { version = "0.1.85", optional = true }
+http = { version = "1.2.0", optional = true }
+once_cell = { version = "1.20.2", optional = true }
+opentelemetry = { version = "0.27.1", optional = true }
+opentelemetry-appender-tracing = { version = "0.27.0", optional = true }
+opentelemetry-http = { version = "0.27.0", optional = true }
+opentelemetry-otlp = { version = "0.27.0", optional = true }
+opentelemetry-semantic-conventions = { version = "0.27.0", optional = true }
+opentelemetry_sdk = { version = "0.27.1", features = [
+    "rt-tokio",
+], optional = true }
+reqwest = { version = "0.12.12", optional = true }
+reqwest-middleware = { version = "0.4.0", optional = true }
+tracing-opentelemetry = { version = "0.28.0", optional = true }
+tracing-subscriber = { version = "0.3.19", features = [
+    "env-filter",
+], optional = true }
+
+
 [dev-dependencies]
 serde_json = "1.0.128"
 
 [features]
 time = ["dep:time"]
+telemetry = [
+    "async-trait",
+    "http",
+    "once_cell",
+    "opentelemetry",
+    "opentelemetry-appender-tracing",
+    "opentelemetry-http",
+    "opentelemetry-otlp",
+    "opentelemetry-semantic-conventions",
+    "opentelemetry_sdk",
+    "reqwest",
+    "reqwest-middleware",
+    "tracing-opentelemetry",
+    "tracing-subscriber",
+]
 
 [lints.rust]
 dead_code = "warn"
