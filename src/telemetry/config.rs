@@ -38,7 +38,7 @@ pub struct ExporterConfig {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct StdoutLogsConfig {
-	enable: bool,
+	pub enabled: bool,
 	level: Option<LevelFilter>,
 	filter_directives: Option<String>,
 }
@@ -47,7 +47,7 @@ pub struct StdoutLogsConfig {
 #[derive(Debug, Deserialize, Clone)]
 #[allow(missing_docs)]
 pub struct ProviderConfig {
-	pub enable: bool,
+	pub enabled: bool,
 	pub level: Option<LevelFilter>,
 	pub filter_directives: Option<String>,
 }
@@ -80,76 +80,15 @@ impl StdoutLogsConfig {
 
 impl Default for StdoutLogsConfig {
 	fn default() -> Self {
-		Self { enable: true, level: None, filter_directives: None }
+		Self { enabled: true, level: None, filter_directives: None }
 	}
 }
 
-impl OtelConfig {
-	pub(crate) fn stdout_enable(&self) -> bool {
-		self.stdout.as_ref().is_none_or(|config| config.enable)
-	}
-	pub(crate) fn traces_enable(&self) -> bool {
-		self.exporter
-			.as_ref()
-			.is_some_and(|config| config.tracer.as_ref().is_some_and(|tracer| tracer.enable))
-	}
-	pub(crate) fn metrics_enable(&self) -> bool {
-		self.exporter
-			.as_ref()
-			.is_some_and(|config| config.meter.as_ref().is_some_and(|meter| meter.enable))
-	}
-	pub(crate) fn logs_enable(&self) -> bool {
-		self.exporter
-			.as_ref()
-			.is_some_and(|config| config.logger.as_ref().is_some_and(|logger| logger.enable))
-	}
-	pub(crate) fn get_traces_config(&self) -> Result<ProviderConfig, MissingConfigError> {
-		self.exporter
-			.as_ref()
-			.and_then(|exporter| exporter.tracer.clone())
-			.ok_or(MissingConfigError::Traces)
-	}
-	pub(crate) fn get_metrics_config(&self) -> Result<ProviderConfig, MissingConfigError> {
-		self.exporter
-			.as_ref()
-			.and_then(|exporter| exporter.meter.clone())
-			.ok_or(MissingConfigError::Metrics)
-	}
-	pub(crate) fn get_logs_config(&self) -> Result<ProviderConfig, MissingConfigError> {
-		self.exporter
-			.as_ref()
-			.and_then(|exporter| exporter.logger.clone())
-			.ok_or(MissingConfigError::Logs)
-	}
-	pub(crate) fn get_stdout_config(&self) -> StdoutLogsConfig {
-		self.stdout.clone().unwrap_or_default()
-	}
+impl ExporterConfig {
 	#[allow(clippy::expect_used)]
 	pub(crate) fn get_endpoint(&self) -> Url {
-		self.exporter
-			.as_ref()
-			.and_then(|exporter| exporter.clone().endpoint)
+		self.endpoint
+			.clone()
 			.unwrap_or(Url::from_str(DEFAULT_ENDPOINT).expect("Error parsing default endpoint"))
 	}
-	pub(crate) fn get_service_name(&self) -> String {
-		self.exporter
-			.as_ref()
-			.map_or(env!("CARGO_PKG_NAME").to_owned(), |exporter| exporter.service_name.clone())
-	}
-	pub(crate) fn get_version(&self) -> String {
-		self.exporter
-			.as_ref()
-			.map_or(env!("CARGO_PKG_VERSION").to_owned(), |exporter| exporter.service_name.clone())
-	}
-}
-
-/// Missing configurations errors
-#[derive(Debug, thiserror::Error)]
-pub enum MissingConfigError {
-	#[error("Traces export configuration is missing")]
-	Traces,
-	#[error("Metrics export configuration is missing")]
-	Metrics,
-	#[error("Logs export configuration is missing")]
-	Logs,
 }

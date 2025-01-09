@@ -4,7 +4,7 @@
 //! tools
 use std::str::FromStr as _;
 
-use config::{MissingConfigError, OtelConfig};
+use config::OtelConfig;
 use opentelemetry::{
 	trace::{TraceError, TracerProvider as _},
 	KeyValue,
@@ -96,59 +96,89 @@ fn init_logs(
 
 /// Initializes the OpenTelemetry
 #[must_use]
-pub fn init_otel(config: OtelConfig) -> Result<ProvidersGuard, OtelInitError> {
+pub fn init_otel(config: &OtelConfig) -> Result<ProvidersGuard, OtelInitError> {
 	opentelemetry::global::set_text_map_propagator(TraceContextPropagator::default());
 
-	let stdout_layer = if config.stdout_enable() {
-		let logger_config = config.get_stdout_config();
-		let filter_fmt = EnvFilter::from_str(&logger_config.get_filter())?;
+	let stdout_layer = config
+		.stdout
+		.as_ref()
+		.and_then(|stdout| stdout.enabled.then_some(stdout))
+		.map(|logger_config| {
+			let filter_fmt = EnvFilter::from_str(&logger_config.get_filter())?;
+			Ok::<_, OtelInitError>(
+				tracing_subscriber::fmt::layer().with_thread_names(true).with_filter(filter_fmt),
+			)
+		})
+		.transpose()?;
 
-		Some(tracing_subscriber::fmt::layer().with_thread_names(true).with_filter(filter_fmt))
-	} else {
-		None
-	};
+	let (logger_provider, logs_layer) = config
+		.exporter
+		.as_ref()
+		.map(|exporter| {
+			// exporter.logger.as_ref().map(|logger_config| {
+			exporter.logger.as_ref().and_then(|c| c.enabled.then_some(c)).map(|logger_config| {
+				let filter_otel = EnvFilter::from_str(&logger_config.get_filter())?;
+				let logger_provider = init_logs(
+					exporter.get_endpoint(),
+					exporter.service_name.clone(),
+					exporter.version.clone(),
+				)?;
 
-	let (logger_provider, logs_layer) = if config.logs_enable() {
-		let logger_config = config.get_logs_config()?;
-		let filter_otel = EnvFilter::from_str(&logger_config.get_filter())?;
-		let logger_provider =
-			init_logs(config.get_endpoint(), config.get_service_name(), config.get_version())?;
+				// Create a new OpenTelemetryTracingBridge using the above LoggerProvider.
+				let logs_layer = OpenTelemetryTracingBridge::new(&logger_provider);
+				let logs_layer = logs_layer.with_filter(filter_otel);
 
-		// Create a new OpenTelemetryTracingBridge using the above LoggerProvider.
-		let logs_layer = OpenTelemetryTracingBridge::new(&logger_provider);
-		let logs_layer = logs_layer.with_filter(filter_otel);
+				Ok::<_, OtelInitError>((Some(logger_provider), Some(logs_layer)))
+			})
+		})
+		.flatten()
+		.transpose()?
+		.unwrap_or((None, None));
 
-		(Some(logger_provider), Some(logs_layer))
-	} else {
-		(None, None)
-	};
+	let (tracer_provider, tracer_layer) = config
+		.exporter
+		.as_ref()
+		.map(|exporter| {
+			// exporter.tracer.as_ref().map(|tracer_config| {
+			exporter.tracer.as_ref().and_then(|c| c.enabled.then_some(c)).map(|tracer_config| {
+				let trace_filter = EnvFilter::from_str(&tracer_config.get_filter())?;
+				let tracer_provider = init_traces(
+					exporter.get_endpoint(),
+					exporter.service_name.clone(),
+					exporter.version.clone(),
+				)?;
+				let tracer = tracer_provider.tracer(exporter.service_name.clone());
+				let tracer_layer = OpenTelemetryLayer::new(tracer).with_filter(trace_filter);
+				Ok::<_, OtelInitError>((Some(tracer_provider), Some(tracer_layer)))
+			})
+		})
+		.flatten()
+		.transpose()?
+		.unwrap_or((None, None));
 
-	let (tracer_provider, tracer_layer) = if config.traces_enable() {
-		let tracer_config = config.get_traces_config()?;
+	let (meter_provider, meter_layer) = config
+		.exporter
+		.as_ref()
+		.map(|exporter| {
+			// exporter.meter.as_ref().map(|meter_config| {
+			exporter.meter.as_ref().and_then(|c| c.enabled.then_some(c)).map(|meter_config| {
+				let metrics_filter = EnvFilter::from_str(&meter_config.get_filter())?;
+				let meter_provider = init_metrics(
+					exporter.get_endpoint(),
+					exporter.service_name.clone(),
+					exporter.version.clone(),
+				)?;
+				let meter_layer =
+					MetricsLayer::new(meter_provider.clone()).with_filter(metrics_filter);
 
-		let trace_filter = EnvFilter::from_str(&tracer_config.get_filter())?;
-		let tracer_provider =
-			init_traces(config.get_endpoint(), config.get_service_name(), config.get_version())?;
-		let tracer = tracer_provider.tracer(config.get_service_name());
-		let tracer_layer = OpenTelemetryLayer::new(tracer).with_filter(trace_filter);
+				Ok::<_, OtelInitError>((Some(meter_provider), Some(meter_layer)))
+			})
+		})
+		.flatten()
+		.transpose()?
+		.unwrap_or((None, None));
 
-		(Some(tracer_provider), Some(tracer_layer))
-	} else {
-		(None, None)
-	};
-
-	let (meter_provider, meter_layer) = if config.metrics_enable() {
-		let meter_config = config.get_metrics_config()?;
-
-		let metrics_filter = EnvFilter::from_str(&meter_config.get_filter())?;
-		let meter_provider =
-			init_metrics(config.get_endpoint(), config.get_service_name(), config.get_version())?;
-		let meter_layer = MetricsLayer::new(meter_provider.clone()).with_filter(metrics_filter);
-
-		(Some(meter_provider), Some(meter_layer))
-	} else {
-		(None, None)
-	};
+	// )}
 
 	// Initialize the tracing subscriber with the OpenTelemetry layer, the
 	// stdout layer, traces and metrics.
@@ -211,6 +241,4 @@ pub enum OtelInitError {
 	MeterInitError(#[from] MetricError),
 	#[error("Parsing EnvFilter directives error: {0}")]
 	EnvFilterError(#[from] tracing_subscriber::filter::ParseError),
-	#[error("Otel configuration is missing: {0}")]
-	MissingConfig(#[from] MissingConfigError),
 }
