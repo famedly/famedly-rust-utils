@@ -7,6 +7,7 @@ resolver = "2"
 publish = ["famedly"]
 
 [dependencies]
+reqwest = { version = "0.12.12", optional = true }
 serde = { version = "1.0.210", features = ["derive"] }
 thiserror = "1.0.64"
 time = { version = "0.3.36", optional = true }
@@ -17,6 +18,7 @@ url = { version = "2.5.2", features = ["serde"] }
 serde_json = "1.0.128"
 
 [features]
+reqwest = ["dep:reqwest"]
 time = ["dep:time"]
 
 [lints.rust]
