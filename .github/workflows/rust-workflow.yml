@@ -29,7 +29,7 @@ jobs:
 
   publish:
     needs: check
-    uses: famedly/backend-build-workflows/.github/workflows/publish-crate.yml@fd0845e44d45187e62d65e6af5b0193ccd655feb
+    uses: famedly/backend-build-workflows/.github/workflows/publish-crate.yml@689c5d0e77566542a20655600c7c0120a041af14
     with:
       registry-name: "crates-io"
       registry-index: "https://github.com/rust-lang/crates.io-index"
