@@ -1,10 +1,13 @@
 [package]
 name = "famedly_rust_utils"
+description = "Random rust utility functions and types"
 version = "0.2.0"
 authors = []
 edition = "2021"
 resolver = "2"
-publish = ["famedly"]
+publish = ["crates-io"]
+license = "AGPL-3.0-only"
+repository = "https://github.com/famedly/famedly-rust-utils"
 
 [dependencies]
 reqwest = { version = "0.12.12", optional = true }
