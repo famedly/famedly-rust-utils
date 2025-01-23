@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0]
+
+### Features
+
+- Add more durations, add more impls
+- Add AsRef impls for BaseUrl and LevelFilter
+- Add reqwest response err helper
+
+### Miscellaneous Tasks
+
+- Start publishing to crates.io
+
 ## [0.1.0] - 2024-11-13
 
 ### Features
