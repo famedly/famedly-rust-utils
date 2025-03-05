@@ -1,4 +1,4 @@
-use serde::{de, Deserialize};
+use serde::{de, Deserialize, Serialize};
 
 /// LevelFilter wrapper with from trait implementations for `tracing`.
 /// ```
@@ -24,6 +24,15 @@ pub struct LevelFilter(pub tracing::level_filters::LevelFilter);
 impl std::fmt::Display for LevelFilter {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
 		self.0.fmt(f)
+	}
+}
+
+impl Serialize for LevelFilter {
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+	where
+		S: serde::Serializer,
+	{
+		serializer.serialize_str(&self.to_string())
 	}
 }
 
@@ -70,7 +79,7 @@ impl std::ops::Deref for LevelFilter {
 }
 
 #[test]
-fn test_append_path() {
+fn test_serde() {
 	use tracing::level_filters::LevelFilter as LF;
 	for (tlvl, s) in [
 		(LF::OFF, "off"),
@@ -82,5 +91,8 @@ fn test_append_path() {
 	] {
 		let lvl: LevelFilter = serde_json::from_value(serde_json::json!(s)).unwrap();
 		assert_eq!(tlvl, LF::from(lvl));
+
+		let lvl: String = serde_json::to_string(&lvl).unwrap();
+		assert_eq!(lvl, format!(r#""{}""#, s));
 	}
 }
