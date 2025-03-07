@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.0]
+## [0.2.1] - 2025-03-06
+
+### Features
+
+- *(level_filter)* Implement Serialize for the LevelFilter
+
+### Miscellaneous Tasks
+
+- Add project automation
+- Use v1 workflow version for stability
+
+## [0.2.0] - 2025-01-24
 
 ### Features
 
