@@ -14,10 +14,86 @@
 //! ```
 use std::time::Duration as StdDuration;
 
+#[cfg(feature = "schemars")]
+use schemars::{
+	schema::InstanceType, schema::Schema, schema::SchemaObject, JsonSchema, SchemaGenerator,
+};
+
+#[doc(hidden)]
+macro_rules! define_generic_wrapper {
+	($doc:expr, $name:ident: $( $(feature $feat:expr; )? { $t:ty, $deser:expr, $($ser:expr)? }),*) => {
+		#[doc = $doc]
+		#[derive(Debug, PartialEq, Eq, Clone, Default)]
+		#[repr(transparent)]
+		pub struct $name<D>(pub D);
+
+		impl<D> $name<D> {
+			#[allow(missing_docs)]
+			pub fn into_inner(self) -> D {
+				self.0
+			}
+		}
+
+		impl<D> From<D> for $name<D> {
+			fn from(duration: D) -> Self {
+				$name(duration)
+			}
+		}
+
+		impl<D> std::ops::Deref for $name<D> {
+			type Target = D;
+			fn deref(&self) -> &Self::Target {
+				&self.0
+			}
+		}
+
+		impl<D> AsRef<D> for $name<D> {
+			fn as_ref(&self) -> &D {
+				&self.0
+			}
+		}
+
+		impl<D: std::fmt::Display> std::fmt::Display for $name<D> {
+			fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+				self.0.fmt(f)
+			}
+		}
+
+		#[cfg(feature = "schemars")]
+		impl <D: JsonSchema> JsonSchema for $name<D> {
+			fn schema_name() -> String {
+				concat!("DurationIn", stringify!($name)).into()
+			}
+			fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
+				SchemaObject {
+					instance_type: Some(InstanceType::Number.into()),
+					..Default::default()
+				}
+				.into()
+			}
+			fn is_referenceable() -> bool {
+				false
+			}
+		}
+
+		$(
+			$( #[cfg(feature = $feat)] )?
+			impl<'de> serde::Deserialize<'de> for $name<$t> {
+				fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+				where
+					D: serde::Deserializer<'de>,
+				{
+					Ok($name($deser(deserializer)?))
+				}
+			}
+		)*
+	};
+}
+
 #[cfg(feature = "time")]
 use time::Duration as TimeDuration;
 
-crate::define_generic_wrapper! {
+define_generic_wrapper! {
 	"Helper wrapper to use in configs to deserialize durations from seconds",
 	Seconds:
 
@@ -60,7 +136,7 @@ fn test_seconds_std_duration() {
 	);
 }
 
-crate::define_generic_wrapper! {
+define_generic_wrapper! {
 	"Helper wrapper to use in configs to deserialize durations from minutes",
 	Minutes:
 
@@ -103,7 +179,7 @@ fn test_minutes_std_duration() {
 	);
 }
 
-crate::define_generic_wrapper! {
+define_generic_wrapper! {
 	"Helper wrapper to use in configs to deserialize durations from hours",
 	Hours:
 
@@ -143,7 +219,7 @@ fn test_hours_std_duration() {
 	assert_eq!(serde_json::from_str::<Hours<StdDuration>>("567").unwrap(), Hours::from_uint(567));
 }
 
-crate::define_generic_wrapper! {
+define_generic_wrapper! {
 	"Helper wrapper to use in configs to deserialize durations from milliseconds",
 	Ms:
 

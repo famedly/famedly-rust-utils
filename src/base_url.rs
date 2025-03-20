@@ -19,6 +19,7 @@ use crate::GenericCombinators;
 /// let foo: Foo = serde_json::from_value(serde_json::json!({"base_url": "http://example.com"})).unwrap();
 /// assert_eq!(foo.base_url.as_str(), "http://example.com/");
 /// ```
+#[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
 #[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
 #[repr(transparent)]
 #[serde(transparent)]

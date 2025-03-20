@@ -5,7 +5,8 @@
 [badge-rust-workflow-img]: https://github.com/famedly/famedly-rust-utils/actions/workflows/rust.yml/badge.svg
 [badge-rust-workflow-url]: https://github.com/famedly/famedly-rust-utils/commits/main
 
-Random rust utility functions and types
+Random rust utility functions and types. For docs see
+[`docs.rs/famedly_rust_utils`](https://docs.rs/famedly_rust_utils/latest/famedly_rust_utils/).
 
 ## Lints
 
