@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2025-03-20
+
+### Features
+
+- Add `schemars` feature for JSON Schemas generation
+
 ## [0.2.1] - 2025-03-06
 
 ### Features
