@@ -14,6 +14,8 @@
 //! ```
 use std::time::Duration as StdDuration;
 
+#[cfg(feature = "schemars")]
+use schemars::{schema::Schema, JsonSchema, SchemaGenerator};
 #[cfg(feature = "time")]
 use time::Duration as TimeDuration;
 
