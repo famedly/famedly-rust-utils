@@ -17,6 +17,7 @@ use serde::{de, Deserialize, Serialize};
 /// 	assert_eq!(tlvl, LF::from(lvl));
 /// }
 /// ```
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct LevelFilter(pub tracing::level_filters::LevelFilter);
@@ -75,6 +76,32 @@ impl std::ops::Deref for LevelFilter {
 	type Target = tracing::level_filters::LevelFilter;
 	fn deref(&self) -> &Self::Target {
 		&self.0
+	}
+}
+
+#[cfg(feature = "schemars")]
+use schemars::{
+	schema::{InstanceType, Schema, SchemaObject},
+	SchemaGenerator,
+};
+
+#[cfg(feature = "schemars")]
+impl schemars::JsonSchema for LevelFilter {
+	fn schema_name() -> String {
+		"LevelFilter".to_owned()
+	}
+	fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
+		SchemaObject {
+			instance_type: Some(InstanceType::String.into()),
+			enum_values: Some(
+				["off", "error", "warn", "info", "debug", "trace"]
+					.into_iter()
+					.map(Into::into)
+					.collect(),
+			),
+			..Default::default()
+		}
+		.into()
 	}
 }
 

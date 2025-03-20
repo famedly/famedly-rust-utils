@@ -249,6 +249,16 @@ macro_rules! define_generic_wrapper {
 			}
 		}
 
+		#[cfg(feature = "schemars")]
+		impl <D: JsonSchema> JsonSchema for $name<D> {
+			fn schema_name() -> String {
+				D::schema_name()
+			}
+			fn json_schema(generator: &mut SchemaGenerator) -> Schema {
+				D::json_schema(generator)
+			}
+		}
+
 		$(
 			$( #[cfg(feature = $feat)] )?
 			impl<'de> serde::Deserialize<'de> for $name<$t> {
