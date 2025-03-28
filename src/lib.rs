@@ -1,18 +1,31 @@
-//! Famedly rust utils
+#![cfg_attr(all(doc, not(doctest)), feature(doc_auto_cfg))]
+//! This crate consists of incohesive generic types and functions that are
+//! needed in almost every crate but are so small that making a separate crate
+//! for them is too much.
+//!
+//! See [`GenericCombinators`] for some useful generic methods.
+//!
+//! See [`LevelFilter`], [`BaseUrl`] and [`duration`] for useful wrapper types
+//! to use in your `serde`-based configs.
+//!
+//! Enable `schemars` feature to get [`schemars::JsonSchema`] impls for
+//! "config-helper" types to generate config schemas (for documentation and
+//! validation purposes).
 
-/// Workaround on [`url::Url::join` behavior](https://github.com/servo/rust-url/issues/333)
 mod base_url;
 pub mod duration;
-/// [serde::Deserialize] impl for [tracing::level_filters::LevelFilter]
 mod level_filter;
 #[cfg(feature = "reqwest")]
-/// Helpers for [reqwest]
 pub mod reqwest;
 
 pub use base_url::{BaseUrl, BaseUrlParseError};
 pub use level_filter::LevelFilter;
 
-/// Generic combinators
+/// Generic combinators on polymorphic unconstrained types that `std` lacks.
+///
+/// Since rust doesn't allow to define custom infix operators, the only way to
+/// achieve their convenience is `fn(&self, A) -> B` type of functions. This
+/// trait combines some useful operators for generic types.
 pub trait GenericCombinators {
 	/// Convenience method to cast everything into `()`. For example:
 	/// ```
@@ -67,7 +80,7 @@ pub trait GenericCombinators {
 		Self: Sized;
 
 	/// Helper method to inline optional steps in chains. Analogous to
-	/// [GenericCombinators::chain_if]
+	/// [`GenericCombinators::chain_if`]
 	/// ```
 	/// # use famedly_rust_utils::GenericCombinators;
 	/// # #[derive(Debug)]
@@ -140,9 +153,9 @@ impl<A> GenericCombinators for A {
 #[inline]
 pub fn ignore<X>(_: X) {}
 
-/// Extension to [Iterator]
+/// Extension to [`Iterator`]
 pub trait IteratorExt: Iterator {
-	/// Helper function for external types that lack `FromIterator`
+	/// Helper function for external types that lack [`FromIterator`]
 	/// implementation
 	/// ```
 	/// # use famedly_rust_utils::IteratorExt;

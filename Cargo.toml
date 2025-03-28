@@ -8,6 +8,10 @@ resolver = "2"
 publish = ["crates-io"]
 license = "AGPL-3.0-only"
 repository = "https://github.com/famedly/famedly-rust-utils"
+documentation = "https://docs.rs/famedly_rust_utils/latest"
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 reqwest = { version = "0.12.12", optional = true }

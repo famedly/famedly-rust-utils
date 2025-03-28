@@ -1,6 +1,7 @@
+//! [`Deserialize`] impl for [`tracing::level_filters::LevelFilter`]
 use serde::{de, Deserialize, Serialize};
 
-/// LevelFilter wrapper with from trait implementations for `tracing`.
+/// [`tracing::level_filters::LevelFilter`] wrapper with [`Deserialize`] impl.
 /// ```
 /// # use famedly_rust_utils::LevelFilter;
 /// use tracing::level_filters::LevelFilter as LF;
@@ -17,7 +18,6 @@ use serde::{de, Deserialize, Serialize};
 /// 	assert_eq!(tlvl, LF::from(lvl));
 /// }
 /// ```
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct LevelFilter(pub tracing::level_filters::LevelFilter);
