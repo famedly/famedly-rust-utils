@@ -1,4 +1,4 @@
-//! # Duration wrapper for serde
+//! # `Duration` wrapper for [`serde`]
 //!
 //! - `Ms<std::time::Duration>` - deserializes `u64` as milliseconds
 //! - `Seconds<std::time::Duration>` - deserializes `u64` as seconds
@@ -18,6 +18,7 @@ use std::time::Duration as StdDuration;
 use schemars::{
 	schema::InstanceType, schema::Schema, schema::SchemaObject, JsonSchema, SchemaGenerator,
 };
+use serde::Deserialize;
 
 #[doc(hidden)]
 macro_rules! define_generic_wrapper {
@@ -78,7 +79,7 @@ macro_rules! define_generic_wrapper {
 
 		$(
 			$( #[cfg(feature = $feat)] )?
-			impl<'de> serde::Deserialize<'de> for $name<$t> {
+			impl<'de> Deserialize<'de> for $name<$t> {
 				fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
 				where
 					D: serde::Deserializer<'de>,
@@ -94,7 +95,7 @@ macro_rules! define_generic_wrapper {
 use time::Duration as TimeDuration;
 
 define_generic_wrapper! {
-	"Helper wrapper to use in configs to deserialize durations from seconds",
+	"`Duration` wrapper with [`Deserialize`] impl",
 	Seconds:
 
 	{

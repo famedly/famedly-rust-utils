@@ -1,3 +1,4 @@
+//! Workaround on [`Url::join`] [behavior](https://github.com/servo/rust-url/issues/333)
 use std::ops::Deref;
 
 use serde::{de::Error, Deserialize, Deserializer, Serialize};
@@ -6,9 +7,8 @@ use url::Url;
 
 use crate::GenericCombinators;
 
-/// A wrapper over [Url] to deserialize all urls as base url (add trailing slash
-/// if necessary). It is intended as drop-in replacement for [Url], but also
-/// provides [BaseUrl::append_path] method with stricter guarantees.
+/// A wrapper over [`Url`] to deserialize a URL as a base url (adding the
+/// trailing slash if necessary)
 /// ```
 /// # use famedly_rust_utils::BaseUrl;
 /// #[derive(serde::Deserialize)]
@@ -30,12 +30,11 @@ pub struct BaseUrl {
 
 impl BaseUrl {
 	/// Append path segments to the path of a Url, escaping if necessary.
-	/// Source: https://github.com/servo/rust-url/pull/934.
+	/// Source: <https://github.com/servo/rust-url/pull/934>.
 	///
-	/// This differs from Url::join in that it is insensitive to trailing
-	/// slashes in the url and leading slashes in the passed string. See
-	/// documentation of Url::join for discussion of this subtlety. Also, this
-	/// function cannot change any part of the Url other than the path.
+	/// This differs from [`Url::join`] in that it is insensitive to trailing
+	/// slashes in the url and leading slashes in the passed string. Also, this
+	/// function cannot change any part of a URL other than the path.
 	/// ```
 	/// # use famedly_rust_utils::BaseUrl;
 	/// # use url::Url;
@@ -47,7 +46,7 @@ impl BaseUrl {
 	/// my_url.append_path("status").unwrap();
 	/// assert_eq!(my_url.as_str(), "http://www.example.com/api/v1/system/status");
 	/// ```
-	/// Fails if the Url is cannot-be-a-base.
+	/// Fails if the URL cannot be a base.
 	#[allow(clippy::result_unit_err)]
 	#[inline]
 	pub fn append_path(&mut self, path: impl AsRef<str>) -> Result<(), ()> {
@@ -75,13 +74,13 @@ impl TryFrom<Url> for BaseUrl {
 	}
 }
 
-/// Parsing error for [BaseUrl]
+/// Parsing error for [`BaseUrl`]
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 pub enum BaseUrlParseError {
-	/// Parsing error for [Url]
+	/// Parsing error for [`Url`]
 	#[error("Url parse error: {0}")]
 	UrlParseError(#[from] url::ParseError),
-	/// A case when a [Url] is valid but it can't be a base
+	/// A case when a [`Url`] is valid but it cannot be a base
 	#[error("Url cannot be a base")]
 	IsNotBaseUrl,
 }
@@ -120,14 +119,14 @@ impl Deref for BaseUrl {
 	}
 }
 
-/// Add trailing slash to [Url]
+/// Add trailing slash to [`Url`]
 fn add_trailing_slash(url: &mut Url) {
 	if !url.path().ends_with('/') {
 		url.set_path(&format!("{}/", url.path()));
 	}
 }
 
-/// Deserialize [Url] with trailing slash
+/// Deserialize [`Url`] with trailing slash
 fn deserialize_url_with_trailing_slash<'de, D>(deserializer: D) -> Result<Url, D::Error>
 where
 	D: Deserializer<'de>,
