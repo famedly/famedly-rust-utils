@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Famedly GmbH (info@famedly.com)
+//
+// SPDX-License-Identifier: Apache-2.0
+
 //! [`Deserialize`] impl for [`tracing::level_filters::LevelFilter`]
 use serde::{de, Deserialize, Serialize};
 

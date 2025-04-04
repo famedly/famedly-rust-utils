@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Famedly GmbH (info@famedly.com)
+//
+// SPDX-License-Identifier: Apache-2.0
+
 //! Workaround on [`Url::join`] [behavior](https://github.com/servo/rust-url/issues/333)
 use std::ops::Deref;
 
