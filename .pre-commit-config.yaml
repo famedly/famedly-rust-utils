@@ -25,3 +25,7 @@ repos:
     rev: v1.23.5
     hooks:
     -   id: typos
+-   repo: https://github.com/fsfe/reuse-tool
+    rev: v5.0.2
+    hooks:
+    -   id: reuse
