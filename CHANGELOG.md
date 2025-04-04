@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Famedly GmbH (info@famedly.com)
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

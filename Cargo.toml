@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Famedly GmbH (info@famedly.com)
+#
+# SPDX-License-Identifier: Apache-2.0
+
 [package]
 name = "famedly_rust_utils"
 description = "Random rust utility functions and types"
@@ -6,7 +10,7 @@ authors = []
 edition = "2021"
 resolver = "2"
 publish = ["crates-io"]
-license = "AGPL-3.0-only"
+license = "Apache-2.0"
 repository = "https://github.com/famedly/famedly-rust-utils"
 documentation = "https://docs.rs/famedly_rust_utils/latest"
 

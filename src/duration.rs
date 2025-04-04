@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Famedly GmbH (info@famedly.com)
+//
+// SPDX-License-Identifier: Apache-2.0
+
 //! # `Duration` wrapper for [`serde`]
 //!
 //! - `Ms<std::time::Duration>` - deserializes `u64` as milliseconds
