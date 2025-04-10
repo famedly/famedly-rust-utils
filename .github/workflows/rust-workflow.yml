@@ -33,18 +33,20 @@ jobs:
         uses: EmbarkStudios/cargo-deny-action@v2
         with:
           command: check bans licenses sources
-  check:
+
+  rust:
     needs: compliance
-    uses: famedly/backend-build-workflows/.github/workflows/rust-workflow.yml@v1
+    uses: famedly/backend-build-workflows/.github/workflows/rust-workflow.yml@v2
     secrets: inherit
     with:
       clippy_args: '--all-features'
       test_args: '--all-features'
       testcov_args: '--all-features'
+      ref: v2
 
   publish:
-    needs: check
-    uses: famedly/backend-build-workflows/.github/workflows/publish-crate.yml@v1
+    needs: rust
+    uses: famedly/backend-build-workflows/.github/workflows/publish-crate.yml@v2
     with:
       registry-name: "crates-io"
       registry-index: "https://github.com/rust-lang/crates.io-index"
