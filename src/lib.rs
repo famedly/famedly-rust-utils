@@ -17,6 +17,8 @@
 //! validation purposes).
 
 mod base_url;
+#[cfg(feature = "config")]
+pub mod config;
 pub mod duration;
 mod level_filter;
 #[cfg(feature = "reqwest")]

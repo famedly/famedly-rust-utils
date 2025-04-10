@@ -17,6 +17,7 @@ documentation = "https://docs.rs/famedly_rust_utils/latest"
 all-features = true
 
 [dependencies]
+figment = { version = "0.10.19", features = ["env", "test", "yaml"], optional = true }
 reqwest = { version = "0.12.12", optional = true }
 schemars = { version = "0.8.22", optional = true }
 serde = { version = "1.0.210", features = ["derive"] }
@@ -26,9 +27,11 @@ tracing = "0.1.40"
 url = { version = "2.5.4", features = ["serde"] }
 
 [dev-dependencies]
+dedent = "0.1.1"
 serde_json = "1.0.128"
 
 [features]
+config = ["dep:figment"]
 reqwest = ["dep:reqwest"]
 time = ["dep:time"]
 schemars = ["dep:schemars", "schemars/url"]
