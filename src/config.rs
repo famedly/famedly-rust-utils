@@ -81,14 +81,16 @@ fn print_parse_config_errors(env_prefix: &str, error: Box<figment::Error>) {
 /// See [`print_parse_config_errors`] for further edge cases.
 #[allow(clippy::print_stderr)]
 pub fn try_parse_config<C: DeserializeOwned>(env_prefix: &str) -> Result<C, Box<figment::Error>> {
-	// TODO: Starting with version 0.10.20, figment will support
-	// doing this with relative file paths by using
-	// `.search(false)`.
-	//
-	// At that point we'll be able to remove this ugly hack and still
-	// resolve only config files in the CWD - the default behavior is
-	// to bubble up the search to parent directories.
-	if let Ok(cwd) = std::env::current_dir() {
+	if let Some(config_path) = std::env::var_os(format!("{env_prefix}CONFIG")) {
+		Figment::new().merge(figment::providers::Yaml::file_exact(config_path))
+	} else if let Ok(cwd) = std::env::current_dir() {
+		// TODO: Starting with version 0.10.20, figment will support
+		// doing this with relative file paths by using
+		// `.search(false)`.
+		//
+		// At that point we'll be able to remove this ugly hack and still
+		// resolve only config files in the CWD - the default behavior is
+		// to bubble up the search to parent directories.
 		Figment::new()
 			.merge(figment::providers::Yaml::file(cwd.join("config.yml")))
 			.merge(figment::providers::Yaml::file(cwd.join("config.yaml")))
@@ -106,61 +108,97 @@ pub fn try_parse_config<C: DeserializeOwned>(env_prefix: &str) -> Result<C, Box<
 	.map_err(Box::new)
 }
 
-#[test]
-fn test_config_order() {
+#[cfg(test)]
+mod tests {
 	use dedent::dedent;
 	use figment::Jail;
 	use serde::Deserialize;
+
+	use super::{print_parse_config_errors, try_parse_config};
 
 	#[derive(Debug, Clone, Deserialize)]
 	struct TestConfig {
 		option: String,
 	}
 
-	let env_prefix = "FAMEDLY_RUST_UTILS_TEST__";
+	const ENV_PREFIX: &str = "FAMEDLY_RUST_UTILS_TEST__";
 
-	Jail::expect_with(|jail| {
-		jail.create_file(
-			"config.yml",
-			dedent!(
-				r#"
-					option: c
-				"#
-			),
-		)?;
+	#[test]
+	fn test_config_order() {
+		Jail::expect_with(|jail| {
+			jail.create_file(
+				"config.yml",
+				dedent!(
+					r#"
+						option: c
+					"#
+				),
+			)?;
 
-		let cfg: Result<TestConfig, _> = try_parse_config(env_prefix);
+			let cfg: Result<TestConfig, _> = try_parse_config(ENV_PREFIX);
 
-		// This *could* be a simple `.expect()`, but it's a nice lil'
-		// spot to make stuff panic with error messages if you want to
-		// test out what your formatting ends up looking like.
-		match cfg {
-			Ok(cfg) => assert_eq!(cfg.option, "c"),
-			Err(e) => {
-				print_parse_config_errors(env_prefix, e);
-				panic!("Configuration must be valid")
-			}
-		};
+			// This *could* be a simple `.expect()`, but it's a nice lil'
+			// spot to make stuff panic with error messages if you want to
+			// test out what your formatting ends up looking like.
+			match cfg {
+				Ok(cfg) => assert_eq!(cfg.option, "c"),
+				Err(e) => {
+					print_parse_config_errors(ENV_PREFIX, e);
+					panic!("Configuration must be valid")
+				}
+			};
 
-		jail.create_file(
-			"config.yaml",
-			dedent!(
-				r#"
-					option: b
-				"#
-			),
-		)?;
+			jail.create_file(
+				"config.yaml",
+				dedent!(
+					r#"
+						option: b
+					"#
+				),
+			)?;
 
-		let cfg: TestConfig = try_parse_config(env_prefix).expect("configuration must be valid");
+			let cfg: TestConfig =
+				try_parse_config(ENV_PREFIX).expect("configuration must be valid");
 
-		assert_eq!(cfg.option, "b");
+			assert_eq!(cfg.option, "b");
 
-		jail.set_env("FAMEDLY_RUST_UTILS_TEST__OPTION", "a");
+			jail.set_env("FAMEDLY_RUST_UTILS_TEST__OPTION", "a");
 
-		let cfg: TestConfig = try_parse_config(env_prefix).expect("configuration must be valid");
+			let cfg: TestConfig =
+				try_parse_config(ENV_PREFIX).expect("configuration must be valid");
 
-		assert_eq!(cfg.option, "a");
+			assert_eq!(cfg.option, "a");
 
-		Ok(())
-	});
+			Ok(())
+		});
+	}
+
+	#[test]
+	fn test_config_var() {
+		Jail::expect_with(|jail| {
+			jail.create_file(
+				"special-config.yaml",
+				dedent!(
+					r#"
+						option: b
+					"#
+				),
+			)?;
+			jail.set_env(
+				"FAMEDLY_RUST_UTILS_TEST__CONFIG",
+				jail.directory()
+					.join("special-config.yaml")
+					.as_os_str()
+					.to_str()
+					.expect("must be valid unicode; if it's not, the test is broken on this system, not the code"),
+			);
+
+			let cfg: TestConfig =
+				try_parse_config(ENV_PREFIX).expect("configuration must be valid");
+
+			assert_eq!(cfg.option, "b");
+
+			Ok(())
+		});
+	}
 }
