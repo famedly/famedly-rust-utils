@@ -5,7 +5,7 @@
 [package]
 name = "famedly_rust_utils"
 description = "Various rust utility functions and types"
-version = "0.2.2"
+version = "1.0.0"
 authors = []
 edition = "2021"
 resolver = "2"
