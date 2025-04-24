@@ -5,6 +5,7 @@
 //! Workaround on [`Url::join`] [behavior](https://github.com/servo/rust-url/issues/333)
 use std::ops::Deref;
 
+#[cfg(feature = "serde")]
 use serde::{de::Error, Deserialize, Deserializer, Serialize};
 use thiserror::Error;
 use url::Url;
@@ -24,11 +25,12 @@ use crate::GenericCombinators;
 /// assert_eq!(foo.base_url.as_str(), "http://example.com/");
 /// ```
 #[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Eq, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[repr(transparent)]
-#[serde(transparent)]
+#[cfg_attr(feature = "serde", serde(transparent))]
 pub struct BaseUrl {
-	#[serde(deserialize_with = "deserialize_url_with_trailing_slash")]
+	#[cfg_attr(feature = "serde", serde(deserialize_with = "deserialize_url_with_trailing_slash"))]
 	url: Url,
 }
 
@@ -131,6 +133,7 @@ fn add_trailing_slash(url: &mut Url) {
 }
 
 /// Deserialize [`Url`] with trailing slash
+#[cfg(feature = "serde")]
 fn deserialize_url_with_trailing_slash<'de, D>(deserializer: D) -> Result<Url, D::Error>
 where
 	D: Deserializer<'de>,

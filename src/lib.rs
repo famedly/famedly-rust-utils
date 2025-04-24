@@ -7,6 +7,10 @@
 //! needed in almost every crate but are so small that making a separate crate
 //! for them is too much.
 //!
+//! This includes many small extensions to third crates; all such
+//! features are gated behind appropriate features to prevent
+//! dependency graph explosion.
+//!
 //! See [`GenericCombinators`] for some useful generic methods.
 //!
 //! See [`LevelFilter`], [`BaseUrl`] and [`duration`] for useful wrapper types
@@ -15,16 +19,28 @@
 //! Enable `schemars` feature to get [`schemars::JsonSchema`] impls for
 //! "config-helper" types to generate config schemas (for documentation and
 //! validation purposes).
+//!
+//! See [`config::parse_config`] for an opinionated figment-based
+//! configuration parser.
+//!
+//! See [`reqwest::ReqwestErrorWithBody`] for a reqwest error that
+//! keeps the body of the error instead of discarding it in favor of
+//! the status code.
 
+#[cfg(feature = "base_url")]
 mod base_url;
 #[cfg(feature = "config")]
 pub mod config;
+#[cfg(feature = "serde")]
 pub mod duration;
+#[cfg(feature = "level_filter")]
 mod level_filter;
 #[cfg(feature = "reqwest")]
 pub mod reqwest;
 
+#[cfg(feature = "base_url")]
 pub use base_url::{BaseUrl, BaseUrlParseError};
+#[cfg(feature = "level_filter")]
 pub use level_filter::LevelFilter;
 
 /// Generic combinators on polymorphic unconstrained types that `std` lacks.
