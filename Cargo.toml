@@ -37,7 +37,7 @@ reqwest = ["dep:reqwest", "dep:thiserror"]
 time = ["dep:time"]
 schemars = ["dep:schemars", "schemars/url"]
 serde = ["dep:serde"]
-base_url = ["dep:url", "dep:thiserror"]
+base_url = ["dep:url", "dep:thiserror", "dep:serde"]
 
 [lints.rust]
 dead_code = "warn"
