@@ -8,6 +8,30 @@ SPDX-License-Identifier: Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2025-04-24
+
+This version sets a contract to follow a Rust-style semver versioning
+scheme. Future breaking changes will always be accompanied by a new
+major release.
+
+This does not mean that there will be no breaking changes, or that
+particular care will be taken to avoid them.
+
+The following are the user-visible changes for this release:
+
+### Features
+
+- [**breaking**] Gate all dependency-based features behind features
+- *(config)* Add a generic configuration parsing function
+
+### Documentation
+
+- Improve docs, fix formatting
+
+### Miscellaneous Tasks
+
+- [**breaking**] Relicense to Apache-2.0
+
 ## [0.2.2] - 2025-03-20
 
 ### Features
