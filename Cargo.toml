@@ -31,13 +31,13 @@ dedent = "0.1.1"
 serde_json = "1.0.128"
 
 [features]
-config = ["dep:figment", "dep:serde"]
-level_filter = ["dep:tracing", "dep:serde"]
+config = ["dep:figment", "serde"]
+level_filter = ["dep:tracing"]
 reqwest = ["dep:reqwest", "dep:thiserror"]
 time = ["dep:time"]
 schemars = ["dep:schemars", "schemars/url"]
 serde = ["dep:serde"]
-base_url = ["dep:url", "dep:thiserror", "dep:serde"]
+base_url = ["dep:url", "dep:thiserror", "serde"]
 
 [lints.rust]
 dead_code = "warn"
