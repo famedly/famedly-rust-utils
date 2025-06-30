@@ -11,7 +11,10 @@
 
 [changelog]
 # template for the changelog header
-header = """
+header = """<!--
+SPDX-FileCopyrightText: 2025 Famedly GmbH (info@famedly.com)\n
+SPDX-License-Identifier: Apache-2.0
+-->\n
 # Changelog\n
 All notable changes to this project will be documented in this file.\n
 """
