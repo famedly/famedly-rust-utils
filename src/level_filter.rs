@@ -124,6 +124,6 @@ fn test_serde() {
 		assert_eq!(tlvl, LF::from(lvl));
 
 		let lvl: String = serde_json::to_string(&lvl).unwrap();
-		assert_eq!(lvl, format!(r#""{}""#, s));
+		assert_eq!(lvl, format!(r#""{s}""#));
 	}
 }

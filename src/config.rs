@@ -50,7 +50,7 @@ fn print_parse_config_errors(env_prefix: &str, error: Box<figment::Error>) {
 		eprintln!("\n{}note{}: {}", ANSI_GREEN, ANSI_RESET, note.as_ref());
 	}
 
-	eprintln!("{}error{}: invalid configuration:", ANSI_RED, ANSI_RESET,);
+	eprintln!("{ANSI_RED}error{ANSI_RESET}: invalid configuration:",);
 
 	for error in *error {
 		eprintln!("- {error}");
@@ -96,9 +96,7 @@ pub fn try_parse_config<C: DeserializeOwned>(env_prefix: &str) -> Result<C, Box<
 			.merge(figment::providers::Yaml::file(cwd.join("config.yaml")))
 	} else {
 		eprintln!(
-			"{}warning{}: could not access current working directory; configuration files will be ignored",
-			ANSI_YELLOW,
-			ANSI_RESET
+			"{ANSI_YELLOW}warning{ANSI_RESET}: could not access current working directory; configuration files will be ignored"
 		);
 
 		Figment::new()
