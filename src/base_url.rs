@@ -25,7 +25,7 @@ use crate::GenericCombinators;
 /// assert_eq!(foo.base_url.as_str(), "http://example.com/");
 /// ```
 #[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[repr(transparent)]
 #[cfg_attr(feature = "serde", serde(transparent))]
