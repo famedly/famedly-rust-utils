@@ -122,6 +122,15 @@ pub trait GenericCombinators {
 	fn chain_opt<X>(self, o: Option<X>, f: impl FnOnce(Self, X) -> Self) -> Self
 	where
 		Self: Sized;
+
+	/// Helper method to revert function application order.
+	/// ```
+	/// # use famedly_rust_utils::GenericCombinators;
+	/// "huge multiline expression here".apply_to(|x| println!("{x}"));
+	/// ```
+	fn apply_to<X>(self, f: impl FnOnce(Self) -> X) -> X
+	where
+		Self: Sized;
 }
 
 impl<A> GenericCombinators for A {
@@ -150,6 +159,11 @@ impl<A> GenericCombinators for A {
 		} else {
 			self
 		}
+	}
+
+	#[inline]
+	fn apply_to<X>(self, f: impl FnOnce(Self) -> X) -> X {
+		f(self)
 	}
 }
 
