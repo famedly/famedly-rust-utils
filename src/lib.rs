@@ -194,6 +194,61 @@ impl<I: Iterator> IteratorExt for I {
 	}
 }
 
+/// Helper wrapper to serialize types as strings using [`FromStr`] and
+/// [`ToString`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+pub struct AsString<X>(pub X);
+
+impl<X> From<X> for AsString<X> {
+	fn from(x: X) -> Self {
+		AsString(x)
+	}
+}
+
+impl<X> AsRef<X> for AsString<X> {
+	fn as_ref(&self) -> &X {
+		&self.0
+	}
+}
+
+impl<X> std::ops::Deref for AsString<X> {
+	type Target = X;
+	fn deref(&self) -> &X {
+		&self.0
+	}
+}
+
+#[cfg(feature = "serde")]
+impl<X: ToString> serde::Serialize for AsString<X> {
+	fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+		self.0.to_string().serialize(serializer)
+	}
+}
+
+#[cfg(feature = "serde")]
+impl<'de, X: std::str::FromStr<Err = E>, E: std::fmt::Display> serde::Deserialize<'de>
+	for AsString<X>
+{
+	fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+		Ok(AsString(
+			X::from_str(<&str>::deserialize(deserializer)?).map_err(serde::de::Error::custom)?,
+		))
+	}
+}
+
+#[cfg(feature = "schemars")]
+impl<X> schemars::JsonSchema for AsString<X> {
+	fn schema_name() -> std::borrow::Cow<'static, str> {
+		"AsString".into()
+	}
+	fn json_schema(_generator: &mut schemars::SchemaGenerator) -> schemars::Schema {
+		schemars::json_schema!({"type": "string"})
+	}
+	fn inline_schema() -> bool {
+		true
+	}
+}
+
 #[test]
 fn test_ignore() -> Result<(), String> {
 	let some_res: Result<u8, String> = Ok(3);
