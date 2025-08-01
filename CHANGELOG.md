@@ -8,6 +8,18 @@ SPDX-License-Identifier: Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2025-08-01
+
+### Features
+
+- Add `Serialize` impls for durations
+- Add `AsString`
+- Add `apply_to` combinator
+
+### Testing
+
+- Add more tests for durations
+
 ## [1.0.1] - 2025-06-30
 
 ### Features
