@@ -19,14 +19,12 @@
 use std::time::Duration as StdDuration;
 
 #[cfg(feature = "schemars")]
-use schemars::{
-	schema::InstanceType, schema::Schema, schema::SchemaObject, JsonSchema, SchemaGenerator,
-};
+use schemars::{JsonSchema, Schema, SchemaGenerator};
 use serde::{Deserialize, Serialize, Serializer};
 
 #[doc(hidden)]
 macro_rules! define_generic_wrapper {
-	($doc:expr, $name:ident: $( $(feature $feat:expr; )? { $t:ty, $deser:expr, $($ser:expr)? }),*) => {
+	($doc:expr, $name:ident: $( $(feature $feat:expr; )? { $t:ty, $deser:expr, $ser:expr }),*) => {
 		#[doc = $doc]
 		#[derive(Debug, PartialEq, Eq, Clone, Default)]
 		#[repr(transparent)]
@@ -64,24 +62,20 @@ macro_rules! define_generic_wrapper {
 			}
 		}
 
-		#[cfg(feature = "schemars")]
-		impl <D: JsonSchema> JsonSchema for $name<D> {
-			fn schema_name() -> String {
-				concat!("DurationIn", stringify!($name)).into()
-			}
-			fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
-				SchemaObject {
-					instance_type: Some(InstanceType::Number.into()),
-					..Default::default()
-				}
-				.into()
-			}
-			fn is_referenceable() -> bool {
-				false
-			}
-		}
-
 		$(
+			#[cfg(feature = "schemars")]
+			impl JsonSchema for $name<$t> {
+				fn schema_name() -> std::borrow::Cow<'static, str> {
+					concat!("DurationIn", stringify!($name)).into()
+				}
+				fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
+					schemars::json_schema!({"type": "integer"})
+				}
+				fn inline_schema() -> bool {
+					true
+				}
+			}
+
 			$( #[cfg(feature = $feat)] )?
 			impl<'de> Deserialize<'de> for $name<$t> {
 				fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -93,13 +87,39 @@ macro_rules! define_generic_wrapper {
 			}
 
 			$( #[cfg(feature = $feat)] )?
-			$(
 			impl Serialize for $name<$t> {
 				fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
 					$ser(serializer, &self.0)
 				}
 			}
-			)?
+
+			$( #[cfg(feature = $feat)] )?
+			paste::paste! {
+				#[test]
+				fn [<test_ $name:lower _ $t:lower _serde>]() {
+					let x = $name::<$t>::from_uint(567);
+					let json = serde_json::to_value(&x).unwrap();
+					assert_eq!(json.as_i64().unwrap(), 567);
+					let x_parsed: $name<$t> = serde_json::from_value(json).unwrap();
+					assert_eq!(x, x_parsed);
+				}
+
+				#[test]
+				#[cfg(feature = "schemars")]
+				fn [<test_ $name:lower _ $t:lower _schemars>]() {
+					fn mk_default() -> $name<$t> {
+						$name::<$t>::from_uint(567)
+					}
+					#[derive(schemars::JsonSchema)]
+					struct TestStruct {
+						#[serde(default = "mk_default")]
+						_duration: $name<$t>,
+					}
+					let schema = schemars::schema_for!(TestStruct).as_value()["properties"]["_duration"].clone();
+					assert_eq!(schema["default"], 567);
+					assert_eq!(schema["type"], "integer");
+				}
+			}
 		)*
 	};
 }
@@ -137,17 +157,15 @@ impl Seconds<StdDuration> {
 impl Seconds<TimeDuration> {
 	#[allow(missing_docs)]
 	#[must_use]
+	pub const fn from_uint(s: u32) -> Self {
+		Self::from_int(s as i64)
+	}
+
+	#[allow(missing_docs)]
+	#[must_use]
 	pub const fn from_int(s: i64) -> Self {
 		Seconds(TimeDuration::seconds(s))
 	}
-}
-
-#[test]
-fn test_seconds_std_duration() {
-	assert_eq!(
-		serde_json::from_str::<Seconds<StdDuration>>("567").unwrap(),
-		Seconds::from_uint(567)
-	);
 }
 
 define_generic_wrapper! {
@@ -180,17 +198,15 @@ impl Minutes<StdDuration> {
 impl Minutes<TimeDuration> {
 	#[allow(missing_docs)]
 	#[must_use]
+	pub const fn from_uint(m: u32) -> Self {
+		Self::from_int(m as i64)
+	}
+
+	#[allow(missing_docs)]
+	#[must_use]
 	pub const fn from_int(m: i64) -> Self {
 		Minutes(TimeDuration::minutes(m))
 	}
-}
-
-#[test]
-fn test_minutes_std_duration() {
-	assert_eq!(
-		serde_json::from_str::<Minutes<StdDuration>>("567").unwrap(),
-		Minutes::from_uint(567)
-	);
 }
 
 define_generic_wrapper! {
@@ -223,14 +239,15 @@ impl Hours<StdDuration> {
 impl Hours<TimeDuration> {
 	#[allow(missing_docs)]
 	#[must_use]
+	pub const fn from_uint(h: u32) -> Self {
+		Self::from_int(h as i64)
+	}
+
+	#[allow(missing_docs)]
+	#[must_use]
 	pub const fn from_int(h: i64) -> Self {
 		Hours(TimeDuration::hours(h))
 	}
-}
-
-#[test]
-fn test_hours_std_duration() {
-	assert_eq!(serde_json::from_str::<Hours<StdDuration>>("567").unwrap(), Hours::from_uint(567));
 }
 
 define_generic_wrapper! {
@@ -263,12 +280,13 @@ impl Ms<StdDuration> {
 impl Ms<TimeDuration> {
 	#[allow(missing_docs)]
 	#[must_use]
+	pub const fn from_uint(ms: u32) -> Self {
+		Self::from_int(ms as i64)
+	}
+
+	#[allow(missing_docs)]
+	#[must_use]
 	pub const fn from_int(ms: i64) -> Self {
 		Ms(TimeDuration::milliseconds(ms))
 	}
-}
-
-#[test]
-fn test_ms_std_duration() {
-	assert_eq!(serde_json::from_str::<Ms<StdDuration>>("567").unwrap(), Ms::from_uint(567));
 }

@@ -84,28 +84,15 @@ impl std::ops::Deref for LevelFilter {
 }
 
 #[cfg(feature = "schemars")]
-use schemars::{
-	schema::{InstanceType, Schema, SchemaObject},
-	SchemaGenerator,
-};
+use schemars::{json_schema, Schema, SchemaGenerator};
 
 #[cfg(feature = "schemars")]
 impl schemars::JsonSchema for LevelFilter {
-	fn schema_name() -> String {
-		"LevelFilter".to_owned()
+	fn schema_name() -> std::borrow::Cow<'static, str> {
+		"LevelFilter".into()
 	}
 	fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
-		SchemaObject {
-			instance_type: Some(InstanceType::String.into()),
-			enum_values: Some(
-				["off", "error", "warn", "info", "debug", "trace"]
-					.into_iter()
-					.map(Into::into)
-					.collect(),
-			),
-			..Default::default()
-		}
-		.into()
+		json_schema!({"type": "string", "enum": ["off", "error", "warn", "info", "debug", "trace"]})
 	}
 }
 

@@ -22,8 +22,9 @@ figment = { version = "0.10.19", features = [
     "test",
     "yaml",
 ], optional = true }
+paste = { version = "1.0.15", optional = true }
 reqwest = { version = "0.12.12", optional = true }
-schemars = { version = "0.8.22", optional = true }
+schemars = { version = "1.0.4", optional = true }
 serde = { version = "1.0.210", features = ["derive"], optional = true }
 thiserror = { version = "1.0.64", optional = true }
 time = { version = "0.3.36", optional = true }
@@ -39,8 +40,8 @@ config = ["dep:figment", "dep:serde"]
 level_filter = ["dep:tracing", "dep:serde"]
 reqwest = ["dep:reqwest", "dep:thiserror"]
 time = ["dep:time"]
-schemars = ["dep:schemars", "schemars/url"]
-serde = ["dep:serde"]
+schemars = ["dep:schemars", "schemars/url2"]
+serde = ["dep:serde", "dep:paste"]
 base_url = ["dep:url", "dep:thiserror", "dep:serde"]
 
 [lints.rust]
