@@ -22,7 +22,7 @@ use std::time::Duration as StdDuration;
 use schemars::{
 	schema::InstanceType, schema::Schema, schema::SchemaObject, JsonSchema, SchemaGenerator,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize, Serializer};
 
 #[doc(hidden)]
 macro_rules! define_generic_wrapper {
@@ -91,6 +91,15 @@ macro_rules! define_generic_wrapper {
 					Ok($name($deser(deserializer)?))
 				}
 			}
+
+			$( #[cfg(feature = $feat)] )?
+			$(
+			impl Serialize for $name<$t> {
+				fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+					$ser(serializer, &self.0)
+				}
+			}
+			)?
 		)*
 	};
 }
@@ -105,14 +114,14 @@ define_generic_wrapper! {
 	{
 		StdDuration,
 		|deserializer| u64::deserialize(deserializer).map(StdDuration::from_secs),
-		|serializer: S, x: StdDuration| serializer.serialize_u64(x.as_secs())
+		|serializer: S, x: &StdDuration| serializer.serialize_u64(x.as_secs())
 	},
 
 	feature "time";
 	{
 		TimeDuration,
 		|deserializer| i64::deserialize(deserializer).map(TimeDuration::seconds),
-		|serializer: S, x: TimeDuration| serializer.serialize_i64(x.whole_seconds())
+		|serializer: S, x: &TimeDuration| serializer.serialize_i64(x.whole_seconds())
 	}
 }
 
@@ -148,14 +157,14 @@ define_generic_wrapper! {
 	{
 		StdDuration,
 		|deserializer| u64::deserialize(deserializer).map(|x| StdDuration::from_secs(x * 60)),
-		|serializer: S, x: StdDuration| serializer.serialize_u64(x.as_secs() / 60)
+		|serializer: S, x: &StdDuration| serializer.serialize_u64(x.as_secs() / 60)
 	},
 
 	feature "time";
 	{
 		TimeDuration,
 		|deserializer| i64::deserialize(deserializer).map(TimeDuration::minutes),
-		|serializer: S, x: TimeDuration| serializer.serialize_i64(x.whole_minutes())
+		|serializer: S, x: &TimeDuration| serializer.serialize_i64(x.whole_minutes())
 	}
 }
 
@@ -191,14 +200,14 @@ define_generic_wrapper! {
 	{
 		StdDuration,
 		|deserializer| u64::deserialize(deserializer).map(|x| StdDuration::from_secs(x * 60 * 60)),
-		|serializer: S, x: StdDuration| serializer.serialize_u64(x.as_secs() / 60 / 60)
+		|serializer: S, x: &StdDuration| serializer.serialize_u64(x.as_secs() / 60 / 60)
 	},
 
 	feature "time";
 	{
 		TimeDuration,
 		|deserializer| i64::deserialize(deserializer).map(TimeDuration::hours),
-		|serializer: S, x: TimeDuration| serializer.serialize_i64(x.whole_hours())
+		|serializer: S, x: &TimeDuration| serializer.serialize_i64(x.whole_hours())
 	}
 }
 
@@ -231,14 +240,14 @@ define_generic_wrapper! {
 	{
 		StdDuration,
 		|deserializer| u64::deserialize(deserializer).map(StdDuration::from_millis),
-		// |serializer: S, x: StdDuration| serializer.serialize_u128(x.as_millis())
+		|serializer: S, x: &StdDuration| serializer.serialize_u128(x.as_millis())
 	},
 
 	feature "time";
 	{
 		TimeDuration,
 		|deserializer| i64::deserialize(deserializer).map(TimeDuration::milliseconds),
-		// |serializer: S, x: TimeDuration| serializer.serialize_i64(x.whole_milliseconds())
+		|serializer: S, x: &TimeDuration| serializer.serialize_i128(x.whole_milliseconds())
 	}
 }
 
