@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! [`Deserialize`] impl for [`tracing::level_filters::LevelFilter`]
+#[cfg(feature = "serde")]
 use serde::{de, Deserialize, Serialize};
 
 /// [`tracing::level_filters::LevelFilter`] wrapper with [`Deserialize`] impl.
@@ -32,6 +33,7 @@ impl std::fmt::Display for LevelFilter {
 	}
 }
 
+#[cfg(feature = "serde")]
 impl Serialize for LevelFilter {
 	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
 	where
@@ -41,6 +43,7 @@ impl Serialize for LevelFilter {
 	}
 }
 
+#[cfg(feature = "serde")]
 impl<'de> Deserialize<'de> for LevelFilter {
 	fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
 	where
