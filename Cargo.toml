@@ -17,23 +17,23 @@ documentation = "https://docs.rs/famedly_rust_utils/latest"
 all-features = true
 
 [dependencies]
-figment = { version = "0.10.19", features = [
+figment = { version = "0.10.0", features = [
     "env",
     "test",
     "yaml",
 ], optional = true }
-paste = { version = "1.0.15", optional = true }
-reqwest = { version = "0.13.1", default-features = false, features = ["rustls"], optional = true }
-schemars = { version = "1.0.4", optional = true }
-serde = { version = "1.0.210", features = ["derive"], optional = true }
-thiserror = { version = "1.0.64", optional = true }
-time = { version = "0.3.36", optional = true }
-tracing = { version = "0.1.40", optional = true }
-url = { version = "2.5.4", features = ["serde"], optional = true }
+paste = { version = "1.0.0", optional = true }
+reqwest = { version = "0.13.0", optional = true }
+schemars = { version = "1.2.0", optional = true }
+serde = { version = "1.0.194", features = ["derive"], optional = true }
+thiserror = { version = "1.0.0", optional = true }
+time = { version = "0.3.0", optional = true }
+tracing = { version = "0.1.0", optional = true }
+url = { version = "2.5.0", features = ["serde"], optional = true }
 
 [dev-dependencies]
-dedent = "0.1.1"
-serde_json = "1.0.128"
+dedent = "0.1.0"
+serde_json = "1.0.127"
 
 [features]
 config = ["dep:figment", "dep:serde"]
