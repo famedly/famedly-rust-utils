@@ -30,6 +30,8 @@ confidence-threshold = 0.95
 
 exceptions = [
     { crate = "unicode-ident", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
+    { crate = "icu_locale_core", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
+    { crate = "potential_utf", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
     { crate = "yoke", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
     { crate = "yoke-derive", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
     { crate = "writeable", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
@@ -48,5 +50,8 @@ exceptions = [
     { crate = "zerofrom", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
     { crate = "zerofrom-derive", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
     { crate = "zerovec", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
-    { crate = "zerovec-derive", allow = ["Unicode-DFS-2016", "Unicode-3.0"] }
+    { crate = "zerovec-derive", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
+    { crate = "zerotrie", allow = ["Unicode-DFS-2016", "Unicode-3.0"] },
+    { crate = "aws-lc-sys", allow = ["OpenSSL"] },
+    { crate = "webpki-root-certs", allow = ["CDLA-Permissive-2.0"] }
 ]
