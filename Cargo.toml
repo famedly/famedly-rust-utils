@@ -23,7 +23,7 @@ figment = { version = "0.10.19", features = [
     "yaml",
 ], optional = true }
 paste = { version = "1.0.15", optional = true }
-reqwest = { version = "0.12.12", optional = true }
+reqwest = { version = "0.13.1", default-features = false, features = ["rustls"], optional = true }
 schemars = { version = "1.0.4", optional = true }
 serde = { version = "1.0.210", features = ["derive"], optional = true }
 thiserror = { version = "1.0.64", optional = true }
