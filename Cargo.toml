@@ -6,12 +6,13 @@
 name = "famedly_rust_utils"
 description = "Various rust utility functions and types"
 version = "1.0.2"
-authors = []
+authors = ["Famedly Workflows Team <workflow@famedly.com>"]
 edition = "2021"
 resolver = "2"
 license = "Apache-2.0"
 repository = "https://github.com/famedly/famedly-rust-utils"
 documentation = "https://docs.rs/famedly_rust_utils/latest"
+rust-version = "1.78.0"
 
 [package.metadata.docs.rs]
 all-features = true
