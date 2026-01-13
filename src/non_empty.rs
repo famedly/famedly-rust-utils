@@ -69,6 +69,21 @@
 //! let invalid = serde_json::from_str::<BatchRequest>(r#"{"items": []}"#);
 //! assert!(invalid.is_err());
 //! ```
+//!
+//! ## Using the `nonempty!` macro
+//!
+//! ```
+//! # use famedly_rust_utils::nonempty;
+//! // Construct a non-empty collection directly
+//! let numbers = nonempty![1, 2, 3, 4, 5];
+//! assert_eq!(numbers.head, 1);
+//! assert_eq!(numbers.tail, vec![2, 3, 4, 5]);
+//!
+//! // Works with any type
+//! let words = nonempty!["hello", "world"];
+//! assert_eq!(words.len(), 2);
+//! ```
+
 
 use std::ops::Deref;
 
@@ -324,6 +339,27 @@ impl<'de> Deserialize<'de> for TrimmedNonEmptyString {
 /// assert!(serde_json::from_str::<Request>(r#"{"ids": []}"#).is_err());
 /// ```
 pub type NonEmptyVec<T> = nonempty::NonEmpty<T>;
+
+/// Re-export of the full `NonEmpty` type from the `nonempty` crate.
+///
+/// This provides the complete API surface of the `nonempty::NonEmpty` type,
+/// including constructors, iterators, and all trait implementations.
+///
+/// See the [`nonempty` crate documentation](https://docs.rs/nonempty) for full API details.
+pub use nonempty::NonEmpty;
+
+/// Re-export of the `nonempty!` macro for constructing non-empty collections.
+///
+/// # Examples
+///
+/// ```
+/// # use famedly_rust_utils::nonempty;
+/// let vec = nonempty![1, 2, 3];
+/// assert_eq!(vec.len(), 3);
+/// assert_eq!(vec.head, 1);
+/// ```
+#[doc(inline)]
+pub use nonempty::nonempty;
 
 #[cfg(test)]
 mod tests {

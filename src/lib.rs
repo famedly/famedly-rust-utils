@@ -47,7 +47,9 @@ pub use base_url::{BaseUrl, BaseUrlParseError};
 #[cfg(feature = "level_filter")]
 pub use level_filter::LevelFilter;
 #[cfg(feature = "non_empty")]
-pub use non_empty::{NonEmptyError, NonEmptyString, NonEmptyVec, TrimmedNonEmptyString};
+pub use non_empty::{
+	nonempty, NonEmpty, NonEmptyError, NonEmptyString, NonEmptyVec, TrimmedNonEmptyString,
+};
 
 /// Generic combinators on polymorphic unconstrained types that `std` lacks.
 ///
