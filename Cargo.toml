@@ -23,6 +23,7 @@ figment = { version = "0.10.0", features = [
     "test",
     "yaml",
 ], optional = true }
+nonempty = { version = "0.10.0", features = ["serialize"], optional = true }
 paste = { version = "1.0.0", optional = true }
 reqwest = { version = "0.13.0", optional = true }
 schemars = { version = "1.2.0", optional = true }
@@ -44,6 +45,7 @@ time = ["dep:time"]
 schemars = ["dep:schemars", "schemars/url2"]
 serde = ["dep:serde", "dep:paste"]
 base_url = ["dep:url", "dep:thiserror", "dep:serde"]
+non_empty = ["dep:nonempty", "dep:serde", "dep:thiserror"]
 
 [lints.rust]
 dead_code = "warn"
