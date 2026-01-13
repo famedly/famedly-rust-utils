@@ -16,6 +16,9 @@
 //! See [`LevelFilter`], [`BaseUrl`] and [`duration`] for useful wrapper types
 //! to use in your `serde`-based configs.
 //!
+//! See [`NonEmptyString`], [`TrimmedNonEmptyString`], and [`NonEmptyVec`] for
+//! non-empty types that enforce invariants at deserialization time.
+//!
 //! Enable `schemars` feature to get [`schemars::JsonSchema`] impls for
 //! "config-helper" types to generate config schemas (for documentation and
 //! validation purposes).
@@ -35,6 +38,8 @@ pub mod config;
 pub mod duration;
 #[cfg(feature = "level_filter")]
 mod level_filter;
+#[cfg(feature = "non_empty")]
+pub mod non_empty;
 #[cfg(feature = "reqwest")]
 pub mod reqwest;
 
@@ -42,6 +47,8 @@ pub mod reqwest;
 pub use base_url::{BaseUrl, BaseUrlParseError};
 #[cfg(feature = "level_filter")]
 pub use level_filter::LevelFilter;
+#[cfg(feature = "non_empty")]
+pub use non_empty::{NonEmptyError, NonEmptyString, NonEmptyVec, TrimmedNonEmptyString};
 
 /// Generic combinators on polymorphic unconstrained types that `std` lacks.
 ///
