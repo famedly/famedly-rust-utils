@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#![cfg_attr(all(doc, not(doctest)), feature(doc_auto_cfg))]
 //! This crate consists of incohesive generic types and functions that are
 //! needed in almost every crate but are so small that making a separate crate
 //! for them is too much.
