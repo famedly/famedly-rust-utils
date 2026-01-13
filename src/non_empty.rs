@@ -85,9 +85,6 @@ pub enum NonEmptyError {
 	/// The string contains only whitespace after trimming
 	#[error("string must contain non-whitespace characters")]
 	BlankString,
-	/// The collection is empty
-	#[error("collection must be non-empty")]
-	EmptyCollection,
 }
 
 /// A non-empty string wrapper that rejects empty strings during deserialization.
