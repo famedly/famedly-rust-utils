@@ -79,10 +79,10 @@ use thiserror::Error;
 /// Error type for non-empty validation failures.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 pub enum NonEmptyError {
-	/// The string is empty
+	/// String is empty
 	#[error("string must be non-empty")]
 	EmptyString,
-	/// The string contains only whitespace after trimming
+	/// String contains only whitespace after trimming
 	#[error("string must contain non-whitespace characters")]
 	BlankString,
 }
