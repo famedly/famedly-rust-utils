@@ -8,6 +8,21 @@ SPDX-License-Identifier: Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-04-14
+
+### Features
+
+- Add RFC3339 Timestamp
+
+### Bug Fixes
+
+- Make BaseUrl schema inlined
+- Fix some docs
+
+### Documentation
+
+- Replace doc_auto_cfg with doc_cfg
+
 ## [1.0.2] - 2025-08-01
 
 ### Features
