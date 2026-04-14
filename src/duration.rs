@@ -62,20 +62,20 @@ macro_rules! define_generic_wrapper {
 			}
 		}
 
-		$(
-			#[cfg(feature = "schemars")]
-			impl JsonSchema for $name<$t> {
-				fn schema_name() -> std::borrow::Cow<'static, str> {
-					concat!("DurationIn", stringify!($name)).into()
-				}
-				fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
-					schemars::json_schema!({"type": "integer"})
-				}
-				fn inline_schema() -> bool {
-					true
-				}
+		#[cfg(feature = "schemars")]
+		impl<D> JsonSchema for $name<D> {
+			fn schema_name() -> std::borrow::Cow<'static, str> {
+				concat!("DurationIn", stringify!($name)).into()
 			}
+			fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
+				schemars::json_schema!({"type": "integer"})
+			}
+			fn inline_schema() -> bool {
+				true
+			}
+		}
 
+		$(
 			$( #[cfg(feature = $feat)] )?
 			impl<'de> Deserialize<'de> for $name<$t> {
 				fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>

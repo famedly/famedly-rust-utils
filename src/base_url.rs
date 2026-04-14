@@ -5,6 +5,8 @@
 //! Workaround on [`Url::join`] [behavior](https://github.com/servo/rust-url/issues/333)
 use std::ops::Deref;
 
+#[cfg(feature = "schemars")]
+use schemars::{JsonSchema, Schema, SchemaGenerator};
 #[cfg(feature = "serde")]
 use serde::{de::Error, Deserialize, Deserializer, Serialize};
 use thiserror::Error;
@@ -24,7 +26,6 @@ use crate::GenericCombinators;
 /// let foo: Foo = serde_json::from_value(serde_json::json!({"base_url": "http://example.com"})).unwrap();
 /// assert_eq!(foo.base_url.as_str(), "http://example.com/");
 /// ```
-#[cfg_attr(feature = "schemars", derive(schemars::JsonSchema))]
 #[derive(Debug, PartialEq, Eq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[repr(transparent)]
@@ -122,6 +123,19 @@ impl Deref for BaseUrl {
 	type Target = Url;
 	fn deref(&self) -> &Self::Target {
 		&self.url
+	}
+}
+
+#[cfg(feature = "schemars")]
+impl JsonSchema for BaseUrl {
+	fn schema_name() -> std::borrow::Cow<'static, str> {
+		"BaseUrl".into()
+	}
+	fn json_schema(_generator: &mut SchemaGenerator) -> Schema {
+		schemars::json_schema!({"type": "string", "format": "uri"})
+	}
+	fn inline_schema() -> bool {
+		true
 	}
 }
 
