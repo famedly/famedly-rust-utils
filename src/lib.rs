@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#![cfg_attr(all(doc, not(doctest)), feature(doc_cfg))]
+#![cfg_attr(all(docsrs, not(doctest)), feature(doc_cfg))]
 //! This crate consists of incohesive generic types and functions that are
 //! needed in almost every crate but are so small that making a separate crate
 //! for them is too much.
@@ -208,7 +208,7 @@ impl<I: Iterator> IteratorExt for I {
 	}
 }
 
-/// Helper wrapper to serialize types as strings using [`FromStr`] and
+/// Helper wrapper to serialize types as strings using [`std::str::FromStr`] and
 /// [`ToString`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct AsString<X>(pub X);

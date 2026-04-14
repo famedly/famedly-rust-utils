@@ -128,7 +128,7 @@ macro_rules! define_generic_wrapper {
 use time::Duration as TimeDuration;
 
 define_generic_wrapper! {
-	"`Duration` wrapper with [`Deserialize`] impl",
+	"Helper wrapper to use in configs to deserialize durations from seconds",
 	Seconds:
 
 	{

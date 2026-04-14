@@ -78,7 +78,7 @@ fn print_parse_config_errors(env_prefix: &str, error: Box<figment::Error>) {
 /// configuration, which can be confusing if a config file cannot be
 /// read or is misnamed.
 ///
-/// See [`print_parse_config_errors`] for further edge cases.
+/// See internal `print_parse_config_errors` function for further edge cases.
 #[allow(clippy::print_stderr)]
 pub fn try_parse_config<C: DeserializeOwned>(env_prefix: &str) -> Result<C, Box<figment::Error>> {
 	if let Some(config_path) = std::env::var_os(format!("{env_prefix}CONFIG")) {
