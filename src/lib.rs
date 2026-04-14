@@ -37,6 +37,8 @@ pub mod duration;
 mod level_filter;
 #[cfg(feature = "reqwest")]
 pub mod reqwest;
+#[cfg(all(feature = "time", feature = "serde"))]
+pub mod timestamp;
 
 #[cfg(feature = "base_url")]
 pub use base_url::{BaseUrl, BaseUrlParseError};
