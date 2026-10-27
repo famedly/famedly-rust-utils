@@ -6,4 +6,5 @@
 extend-exclude = [
     "LICENSES/**",
     "third_party_licenses/**",
+    "deny.toml",
 ]
