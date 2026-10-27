@@ -8,6 +8,14 @@ SPDX-License-Identifier: Apache-2.0
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-10-27
+
+### Miscellaneous Tasks
+
+- Update webpki root certs for VUL-29
+- Update GitHub Action pins
+- Update GitHub Action pins
+
 ## [1.1.1] - 2026-04-14
 
 ### Features
