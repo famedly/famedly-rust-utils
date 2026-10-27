@@ -18,8 +18,8 @@ use std::{fmt, future::Future};
 /// # }
 /// ```
 pub trait ErrorForStatusWithBody {
-	// Using explicit `impl Future` syntax here instead of `async_fn_in_trait` to
-	// make it `Send`
+	// Using explicit `impl Future` syntax here instead of `async_fn_in_trait`
+	// to make it `Send`
 	#[allow(missing_docs)]
 	fn error_for_status_with_body(
 		self,
