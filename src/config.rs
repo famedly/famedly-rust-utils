@@ -123,6 +123,7 @@ mod tests {
 
 	#[test]
 	fn test_config_order() {
+		#[allow(clippy::result_large_err)]
 		Jail::expect_with(|jail| {
 			jail.create_file(
 				"config.yml",
@@ -173,6 +174,7 @@ mod tests {
 
 	#[test]
 	fn test_config_var() {
+		#[allow(clippy::result_large_err)]
 		Jail::expect_with(|jail| {
 			jail.create_file(
 				"special-config.yaml",
